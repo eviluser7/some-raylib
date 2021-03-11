@@ -1,0 +1,4 @@
+*.o
+screens/*.o
+*.json
+.vscode/
