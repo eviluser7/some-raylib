@@ -250,7 +250,9 @@ void DrawGame(void)
         DrawTexture(background2, 0, -30, WHITE);
         DrawTexture(logo, 63, 0, WHITE);
         DrawText("Press ENTER to begin", 10, 120, 8, WHITE);
-        DrawText("WASD to move", 10, 135, 8, WHITE);
+        DrawText("Arrow keys to move", 10, 135, 8, WHITE);
+        DrawText("Tip: don't leave the light", 10, 150, 8, WHITE);
+        DrawText("v1.0", 5, 5, 8, WHITE);
         DrawText("Made by eviluser7 (c) 2021", 118, 172, 8, WHITE);
 
         DrawTexture(rlLogo, 220, 135, WHITE);
@@ -322,19 +324,19 @@ void UpdatePlayer(void)
     }
 
     // Calculate player input
-    if (IsKeyPressed(KEY_W) && player.position.y > 0.0) {
+    if (IsKeyPressed(KEY_UP) && player.position.y > 0.0) {
         player.position.y -= 16.0;
         PlaySound(footsteps);
     }
-    if (IsKeyPressed(KEY_A) && player.position.x > 0.0) {
+    if (IsKeyPressed(KEY_LEFT) && player.position.x > 0.0) {
         player.position.x -= 16.0;
         PlaySound(footsteps);
     }
-    if (IsKeyPressed(KEY_S) && player.position.y < 144.0) {
+    if (IsKeyPressed(KEY_DOWN) && player.position.y < 144.0) {
         player.position.y += 16.0;
         PlaySound(footsteps);
     }
-    if (IsKeyPressed(KEY_D) && player.position.x < 240.0) {
+    if (IsKeyPressed(KEY_RIGHT) && player.position.x < 240.0) {
         player.position.x += 16.0;
         PlaySound(footsteps);
     }
@@ -386,7 +388,7 @@ void DrawPlayer(void)
 void GetRandomLight(void)
 {
     framesLightCounter++;
-    if (framesLightCounter == 180) {  // Change every 3 seconds
+    if (framesLightCounter >= 180) {  // Change every 3 seconds
         player.justStarted = 0;
         // Restore original tile value
 
