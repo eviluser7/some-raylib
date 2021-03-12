@@ -1,4 +1,4 @@
-![](./resources/logo.png)
+![](./resources/logo2.png)
 # You're afraid of the dark. Find the light and eat to stay alive.
 
 ## Gameplay
