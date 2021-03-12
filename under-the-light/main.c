@@ -9,7 +9,6 @@
 *
 *********************************************************************************/
 
-#include <time.h>
 #include <stdio.h>
 #include "raylib.h"
 #define NEZ_TILEMAP_IMPLEMENTATION
@@ -20,6 +19,12 @@
 #define TILE_SIZE 16
 #define TILEMAP_WIDTH   16
 #define TILEMAP_HEIGHT  10
+
+//#define PLATFORM_WEB
+
+#if defined(PLATFORM_WEB)
+    #include <emscripten.h>
+#endif
 
 // ----------------------
 // Structures definition
@@ -51,6 +56,7 @@ void UpdateGame(void);
 void DrawGame(void);
 void UnloadGame(void);
 void EndGame(void);
+void UpdateDrawFrame(void); // for webpages
 
 void UpdatePlayer(void);
 void DrawPlayer(void);
@@ -117,21 +123,18 @@ int main(void)
     screenWidth = TILE_SIZE * TILEMAP_WIDTH * screenScale;
     screenHeight = TILE_SIZE * TILEMAP_HEIGHT * screenScale + 128;
     InitWindow(screenWidth, screenHeight, "Under the Light");
+    InitAudioDevice();
+    InitGame();
+    PlaySound(initialize);
+#if defined(PLATFORM_WEB)
+    emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
+#else
     SetTargetFPS(60);
 
-    InitGame();
-    InitAudioDevice();
-    PlaySound(initialize);
     while (!WindowShouldClose()) {
-        UpdateGame();
-
-        BeginDrawing();
-        BeginMode2D(camera);
-        ClearBackground(BLACK);
-        DrawGame();
-        EndMode2D();
-        EndDrawing();
+        UpdateDrawFrame();
     }
+#endif
 
     TileSetDestroy(tileSet);
     TileMapDestroy(tileMap);
@@ -297,6 +300,19 @@ void UnloadGame(void)
 void EndGame(void)
 {
     game.scene = ENDING;
+}
+
+// Update and draw
+void UpdateDrawFrame(void)
+{
+    UpdateGame();
+
+    BeginDrawing();
+    BeginMode2D(camera);
+    ClearBackground(BLACK);
+    DrawGame();
+    EndMode2D();
+    EndDrawing();
 }
 
 // -----------------
