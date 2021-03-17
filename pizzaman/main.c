@@ -57,6 +57,7 @@ typedef struct {
     int atTable;
     bool isThere;
     int timer;
+    Texture2D aspect;
 } Customer;
 
 typedef struct {
@@ -99,12 +100,21 @@ static int furnace3Counter = 0;
 static int framesCounter;
 
 Texture2D customer1;
+Texture2D customer2;
+Texture2D customer3;
+Texture2D customer4;
+Texture2D customer5;
+Texture2D customer6;
+Texture2D customer7;
+Texture2D customer8;
+Texture2D customer9;
 Texture2D floorTexture;
 Texture2D furnace;
 Texture2D logo;
 Texture2D pizzaTexture;
 Texture2D pizzamanLeft;
 Texture2D pizzamanRight;
+Texture2D sadPizzaman;
 Texture2D table;
 Font font;
 Sound defeat = { 0 };
@@ -123,6 +133,7 @@ Furnace furnace3;
 
 static Customer customers[CUSTOMERS_PER_LEVEL] = { 0 };
 static Pizza pizzas[AMOUNT_OF_PIZZAS] = { 0 };
+static Texture2D aspects[9] = { 0 };
 
 // -----------------------
 // Main entry point
@@ -155,11 +166,20 @@ int main(void)
 void InitGame(void)
 {
     customer1 = LoadTexture("resources/customer1.png");
+    customer2 = LoadTexture("resources/customer2.png");
+    customer3 = LoadTexture("resources/customer3.png");
+    customer4 = LoadTexture("resources/customer4.png");
+    customer5 = LoadTexture("resources/customer5.png");
+    customer6 = LoadTexture("resources/customer6.png");
+    customer7 = LoadTexture("resources/customer7.png");
+    customer8 = LoadTexture("resources/customer8.png");
+    customer9 = LoadTexture("resources/customer9.png");
     floorTexture = LoadTexture("resources/floorTexture.png");
     pizzamanLeft = LoadTexture("resources/pizzamanLeft.png");
     pizzamanRight = LoadTexture("resources/pizzamanRight.png");
     table = LoadTexture("resources/table.png");
     logo = LoadTexture("resources/logo.png");
+    sadPizzaman = LoadTexture("resources/sadPizzaman.png");
     furnace = LoadTexture("resources/furnace.png");
     pizzaTexture = LoadTexture("resources/pizza.png");
     font = LoadFontEx("resources/font.ttf", 32, 0, 250);
@@ -204,6 +224,16 @@ void InitGame(void)
 
     game.framesCounter = 0;
     framesCounter = 0;
+
+    aspects[0] = customer1;
+    aspects[1] = customer2;
+    aspects[2] = customer3;
+    aspects[3] = customer4;
+    aspects[4] = customer5;
+    aspects[5] = customer6;
+    aspects[6] = customer7;
+    aspects[7] = customer8;
+    aspects[8] = customer9;
 }
 
 void UpdateGame(void)
@@ -296,6 +326,7 @@ void DrawGame(void)
         DrawTextEx(font, "Press E to throw the pizza to customers or to pick it up", (Vector2){ 10.0, 770.0 }, 20, 2, WHITE);
         DrawText("powered by raylib", 925.0, 10.0, 30, WHITE);
         DrawText("eviluser7 (c) 2021", 925.0, 55.0, 30, WHITE);
+        DrawText("v1.1", 10, 10, 70, WHITE);
     }
 
     if (game.scene == GAME) {
@@ -332,11 +363,12 @@ void DrawGame(void)
     }
 
     if (game.scene == ENDING) {
+        DrawTexture(sadPizzaman, 824, 300, WHITE);
         DrawTextEx(font, "One of your customers got tired of waiting!", (Vector2){ 45.0f, 100.0f }, 28, 2, WHITE);
         DrawText(FormatText("Score: %d", player.score), 45, 200, 64, WHITE);
-        DrawTextEx(font, "Wanna get a better record?", (Vector2){ 230.0f, 400.0f }, 32, 2, WHITE);
-        DrawTextEx(font, "Press R to retry", (Vector2){ 350.0f, 500.0f }, 32, 2, WHITE);
-        DrawTextEx(font, "Press L to leave", (Vector2){ 350.0f, 550.0f }, 32, 2, WHITE);
+        DrawTextEx(font, "Wanna get a better record?", (Vector2){ 45.0f, 400.0f }, 32, 2, WHITE);
+        DrawTextEx(font, "Press R to retry", (Vector2){ 45.0f, 500.0f }, 32, 2, WHITE);
+        DrawTextEx(font, "Press L to leave", (Vector2){ 45.0f, 550.0f }, 32, 2, WHITE);
     }
     EndDrawing();
 }
@@ -345,6 +377,15 @@ void DrawGame(void)
 void UnloadGame(void)
 {
     UnloadTexture(customer1);
+    UnloadTexture(customer2);
+    UnloadTexture(customer3);
+    UnloadTexture(customer4);
+    UnloadTexture(customer5);
+    UnloadTexture(customer6);
+    UnloadTexture(customer7);
+    UnloadTexture(customer8);
+    UnloadTexture(customer9);
+    UnloadTexture(sadPizzaman);
     UnloadTexture(pizzamanLeft);
     UnloadTexture(pizzamanRight);
     UnloadTexture(floorTexture);
@@ -516,6 +557,7 @@ void InitCustomer(void)
         customers[i].atTable = -1; // no table set
         customers[i].isThere = false;
         customers[i].timer = GetRandomValue(4, 10);
+        customers[i].aspect = aspects[GetRandomValue(0, 8)];
 
         customers[i].position.x = 260;
         if (i == 0) {
@@ -539,6 +581,7 @@ void SpawnCustomer(void)
             customers[i].atTable = i;
             customers[i].isThere = true;
             customers[i].timer = GetRandomValue(4, 10);
+            customers[i].aspect = aspects[GetRandomValue(0, 8)];
             break;
         }
     }
@@ -571,7 +614,7 @@ void UpdateCustomer(void)
 
         // Timer related
         game.framesCounter++;
-        if (game.framesCounter == 180) {
+        if (game.framesCounter == 230) {
             game.framesCounter = 0;
             customers[0].timer--;
             customers[1].timer--;
@@ -605,7 +648,7 @@ void DrawCustomer(void)
 {
     for (int i = 0; i < CUSTOMERS_PER_LEVEL; i++) {
         if (customers[i].isThere) {
-            DrawTexture(customer1, customers[i].position.x, customers[i].position.y, WHITE);
+            DrawTexture(customers[i].aspect, customers[i].position.x, customers[i].position.y, WHITE);
             DrawTextEx(font, FormatText("%d", customers[i].timer), (Vector2){ customers[i].position.x-40, customers[i].position.y+60 }, 24, 2, WHITE);
         }
     }
